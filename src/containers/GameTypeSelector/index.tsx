@@ -1,53 +1,25 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import Image from "next/image";
+import { SelectorCardButton } from "@/components/SelectorCardButton";
+import { Title } from "@/components/Title";
+import { Theme, GridSize, GameType, GridArrayItem } from "@/types";
 
-export enum Theme {
-  NUMBERS = "NUMBERS",
-  ICONS = "ICONS",
-}
-
-export enum GridSize {
-  "4x4" = "4x4",
-  "6x6" = "6x6",
-}
-
-interface GameType {
-  gridSize: GridSize;
-  theme: Theme;
-  numberOfPlayers: 1 | 2 | 3 | 4 | number;
-}
+import { combineAndShuffleArray, generateArray } from "@/lib";
 
 // game type fields.
 const gameTheme = [Theme.NUMBERS, Theme.ICONS];
 const gameGridSize = [GridSize["4x4"], GridSize["6x6"]];
 
-const SelectorCardButton: React.FC<{
-  children: string | JSX.Element;
-  onClick: () => void;
-  isActive?: boolean;
-}> = ({ children, onClick, isActive }) => {
-  const bgColor = isActive ? "bg-blue-700" : "bg-slate-300";
-  return (
-    <button
-      className={`px-4 w-full py-2 rounded-3.5lg font-bold text-2xl min-w-119 transition-colors duration-300 ${bgColor} ${
-        !isActive && "hover:bg-blue-400"
-      }`}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-};
+export const GameTypeSelector: React.FC<{
+  setGameTypeChosen: Dispatch<SetStateAction<boolean>>;
+  setGameType: Dispatch<SetStateAction<GameType>>;
+  gameType: GameType;
+}> = ({ setGameTypeChosen, setGameType, gameType }) => {
+  const getArray = (gridSize: GridSize) => {
+    const newArray = generateArray(gridSize);
+    return combineAndShuffleArray(newArray);
+  };
 
-export const GameTypeSelector: React.FC = ({}) => {
-  const [gameType, setGameType] = useState<GameType>({
-    gridSize: GridSize["4x4"],
-    theme: Theme.NUMBERS,
-    numberOfPlayers: 1,
-  });
-
-  const Title: React.FC<{ children: string }> = ({ children }) => (
-    <p className="text-blue-500 mb-4 sm:text-xl sm:font-bold">{children}</p>
-  );
   return (
     <div className="p-14 rounded-2.5lg bg-blue-100 space-y-8">
       {/* theme  */}
@@ -116,7 +88,16 @@ export const GameTypeSelector: React.FC = ({}) => {
       </div>
 
       {/* start game CTA  */}
-      <button className="bg-orange hover:bg-orange-100 rounded-4.5lg w-full py-4 font-bold text-2xl transition-colors duration-300">
+      <button
+        className="bg-orange hover:bg-orange-100 rounded-4.5lg w-full py-4 font-bold text-2xl transition-colors duration-300"
+        onClick={() => {
+          // generate array of items to be displayed on the grid.
+          getArray(gameType.gridSize);
+
+          // open game board.
+          setGameTypeChosen(true);
+        }}
+      >
         Start Game
       </button>
     </div>

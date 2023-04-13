@@ -1,24 +1,10 @@
-import { Children } from "react";
+import { GameBoardButtonProps } from "@/types";
 
-export enum ButtonType {
-  CIRCULAR = "CIRCULAR",
-  RECTANGULAR = "RECTANGULAR",
-}
-
-interface ButtonProps {
-  onClick: () => void;
-  buttonType?: ButtonType;
-  children: string | JSX.Element;
-  isDisabled?: boolean;
-  isRevealed?: boolean;
-}
-
-export const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<GameBoardButtonProps> = ({
   isDisabled,
   onClick,
   isRevealed,
   children,
-  buttonType,
 }) => {
   const buttonColor = isDisabled
     ? "bg-blue-300"
