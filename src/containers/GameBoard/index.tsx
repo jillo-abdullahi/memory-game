@@ -2,18 +2,18 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { GameBoardButton } from "@/components/GameBoardButton";
 import { GameTypeSelector } from "@/containers/GameTypeSelector";
-import { Theme, GridSize, GameType, GridArrayItem } from "@/types";
+import { GameBoardProps, GridSize, Theme } from "@/types";
 
-export const GameBoard: React.FC = () => {
-  const [gameTypeChosen, setGameTypeChosen] = useState<boolean>(false);
-  const [gameType, setGameType] = useState<GameType>({
-    gridSize: GridSize["4x4"],
-    theme: Theme.NUMBERS,
-    numberOfPlayers: 1,
-  });
-  const [gridArray, setGridArray] = useState<GridArrayItem[]>([]);
-  const [activeCards, setActiveCards] = useState<number[]>([]);
-
+export const GameBoard: React.FC<GameBoardProps> = ({
+  gameTypeChosen,
+  setGameTypeChosen,
+  gameType,
+  setGameType,
+  gridArray,
+  setGridArray,
+  activeCards,
+  setActiveCards,
+}) => {
   const activateCard = (index: number) => {
     const newArray = [...gridArray];
 
@@ -79,6 +79,7 @@ export const GameBoard: React.FC = () => {
               return (
                 <GameBoardButton
                   key={index}
+                  gridSize={gameType.gridSize}
                   onClick={() => {
                     activateCard(index);
                   }}
@@ -92,8 +93,8 @@ export const GameBoard: React.FC = () => {
                   ) : (
                     <Image
                       src={`/images/icon-${icon}.svg`}
-                      width={50}
-                      height={50}
+                      width={gameType.gridSize === GridSize["4x4"] ? 56 : 40}
+                      height={gameType.gridSize === GridSize["4x4"] ? 56 : 40}
                       alt=""
                     />
                   )}

@@ -31,6 +31,7 @@ export interface GameBoardButtonProps {
   isActive?: boolean;
   isRevealed?: boolean;
   isDisabled?: boolean;
+  gridSize: GridSize;
 }
 
 export interface GridArrayItem {
@@ -38,4 +39,20 @@ export interface GridArrayItem {
   icon: string;
   isRevealed: boolean;
   isActive: boolean;
+}
+
+export interface GameBoardProps {
+  gameTypeChosen: boolean;
+  setGameTypeChosen: Dispatch<SetStateAction<boolean>>;
+  gameType: GameType;
+  setGameType: Dispatch<SetStateAction<GameType>>;
+  gridArray: GridArrayItem[];
+  setGridArray: Dispatch<SetStateAction<GridArrayItem[]>>;
+  activeCards: number[];
+  setActiveCards: Dispatch<SetStateAction<number[]>>;
+}
+
+export interface HeaderProps {
+  restartGame(): void;
+  newGame(): void;
 }
