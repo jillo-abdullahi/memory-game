@@ -36,7 +36,7 @@ export const generateArray = (gridSize: GridSize) => {
       value: index + 1,
       icon: icons[index],
       isRevealed: false,
-      isDisabled: false,
+      isActive: false,
     }));
 
     return newArray;
@@ -45,7 +45,7 @@ export const generateArray = (gridSize: GridSize) => {
       value: index + 1,
       icon: icons[index],
       isRevealed: false,
-      isDisabled: false,
+      isActive: false,
     }));
 
     return newArray;

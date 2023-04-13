@@ -1,21 +1,25 @@
 import { GameBoardButtonProps } from "@/types";
 
-export const Button: React.FC<GameBoardButtonProps> = ({
-  isDisabled,
+export const GameBoardButton: React.FC<GameBoardButtonProps> = ({
+  isActive,
   onClick,
   isRevealed,
   children,
+  isDisabled
 }) => {
-  const buttonColor = isDisabled
-    ? "bg-blue-300"
-    : isRevealed
+  const buttonStyling = isRevealed
+    ? "bg-blue-300 cursor-not-allowed"
+    : isActive
     ? "bg-orange"
-    : "bg-blue-500";
+    : "bg-blue-700";
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-md text-white font-bold
-      ${isDisabled ? "cursor-not-allowed" : ""}}`}
+      className={`flex items-center justify-center overflow-hidden p-4 w-[118px] h-[118px] text-white font-bold text-4xl ${buttonStyling}`}
+      disabled={isRevealed || isActive || isDisabled}
+      style={{
+        borderRadius: "100%",
+      }}
     >
       {children}
     </button>

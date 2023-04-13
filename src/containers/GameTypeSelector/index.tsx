@@ -1,23 +1,26 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import Image from "next/image";
 import { SelectorCardButton } from "@/components/SelectorCardButton";
 import { Title } from "@/components/Title";
-import { Theme, GridSize, GameType, GridArrayItem } from "@/types";
-
+import {
+  Theme,
+  GridSize,
+  GameTypeSelectorProps,
+} from "@/types";
 import { combineAndShuffleArray, generateArray } from "@/lib";
 
 // game type fields.
 const gameTheme = [Theme.NUMBERS, Theme.ICONS];
 const gameGridSize = [GridSize["4x4"], GridSize["6x6"]];
 
-export const GameTypeSelector: React.FC<{
-  setGameTypeChosen: Dispatch<SetStateAction<boolean>>;
-  setGameType: Dispatch<SetStateAction<GameType>>;
-  gameType: GameType;
-}> = ({ setGameTypeChosen, setGameType, gameType }) => {
+export const GameTypeSelector: React.FC<GameTypeSelectorProps> = ({
+  setGameTypeChosen,
+  setGameType,
+  gameType,
+  setGridArray,
+}) => {
+  // generate grid object for the game board
   const getArray = (gridSize: GridSize) => {
     const newArray = generateArray(gridSize);
-    return combineAndShuffleArray(newArray);
+    setGridArray(combineAndShuffleArray(newArray));
   };
 
   return (
