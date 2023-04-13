@@ -28,7 +28,7 @@ const SelectorCardButton: React.FC<{
   const bgColor = isActive ? "bg-blue-700" : "bg-slate-300";
   return (
     <button
-      className={`px-4 w-full py-2 rounded-3.5lg font-bold min-w-119 transition-colors duration-300 ${bgColor} ${
+      className={`px-4 w-full py-2 rounded-3.5lg font-bold text-2xl min-w-119 transition-colors duration-300 ${bgColor} ${
         !isActive && "hover:bg-blue-400"
       }`}
       onClick={onClick}
@@ -44,11 +44,15 @@ export const GameTypeSelector: React.FC = ({}) => {
     theme: Theme.NUMBERS,
     numberOfPlayers: 1,
   });
+
+  const Title: React.FC<{ children: string }> = ({ children }) => (
+    <p className="text-blue-500 mb-4 sm:text-xl sm:font-bold">{children}</p>
+  );
   return (
     <div className="p-14 rounded-2.5lg bg-blue-100 space-y-8">
       {/* theme  */}
       <div>
-        <p className="text-blue-500 mb-4">Select Theme</p>
+        <Title>Select Theme</Title>
         <div className="flex justify-between items-center space-x-6">
           {gameTheme.map((theme, index) => (
             <div key={index} className="w-1/2">
@@ -70,8 +74,8 @@ export const GameTypeSelector: React.FC = ({}) => {
 
       {/* number of players  */}
       <div>
-        <p className="text-blue-500 mb-4">Number of players</p>
-        <div className="flex justify-center items-center space-x-6">
+        <Title>Number of players</Title>
+        <div className="flex justify-center items-center space-x-6 ">
           {[1, 2, 3, 4].map((numberOfPlayers, index) => (
             <SelectorCardButton
               key={index}
@@ -91,7 +95,7 @@ export const GameTypeSelector: React.FC = ({}) => {
 
       {/* Grid size  */}
       <div>
-        <p className="text-blue-500 mb-4">Grid Size</p>
+        <Title>Grid Size</Title>
         <div className="flex justify-between items-center space-x-6">
           {gameGridSize.map((gridSize, index) => (
             <div key={index} className="w-1/2">

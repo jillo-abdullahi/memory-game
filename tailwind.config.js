@@ -32,6 +32,9 @@ module.exports = {
     minWidth: {
       119: "119px",
     },
+    fontFamily: {
+      atkinson: ["atkinson", "sans-serif"],
+    },
   },
   plugins: [],
 };

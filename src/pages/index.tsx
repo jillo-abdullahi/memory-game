@@ -11,7 +11,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="w-full h-full min-h-screen flex items-center justify-center bg-blue-700">
+      <div className="w-full h-full min-h-screen flex items-center justify-center bg-blue-700 font-atkinson">
         <GameBoard />
       </div>
     </>
