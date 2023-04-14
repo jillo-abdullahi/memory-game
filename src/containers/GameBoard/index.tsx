@@ -18,7 +18,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   setMoves,
   setStartTime,
   timeElapsed,
+  gameEnd,
   setGameEnd,
+  setPlayerTurn,
+  playerTurn,
+  setPlayerScores,
 }) => {
   const activateCard = (index: number) => {
     const newArray = [...gridArray];
@@ -53,6 +57,16 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         setGridArray(newArray);
         setActiveCards([]);
         setMoves((prevState) => prevState + 1);
+        changePlayerTurn();
+
+        // set current player score
+        if (gameType.numberOfPlayers > 1) {
+          setPlayerScores((prevState) => {
+            const updatedScores = [...prevState];
+            updatedScores[playerTurn - 1] += 1;
+            return updatedScores;
+          });
+        }
       } else {
         newArray[firstCardIndex].isActive = false;
         newArray[secondCardIndex].isActive = false;
@@ -60,12 +74,23 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           setGridArray(newArray);
           setActiveCards([]);
           setMoves((prevState) => prevState + 1);
+          changePlayerTurn();
         }, 1000);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCards]);
 
+  const changePlayerTurn = () => {
+    if (gameEnd || activeCards.length < 2 || gameType.numberOfPlayers === 1)
+      return;
+    setPlayerTurn((prevState) => {
+      if (prevState === gameType.numberOfPlayers) {
+        return 1;
+      }
+      return prevState + 1;
+    });
+  };
 
   return (
     <div>

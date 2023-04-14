@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { GameModal } from "@/components/GameModal";
 import { Theme, GridSize, GameType, GridArrayItem } from "@/types";
 import { SinglePlayerMoves } from "@/components/SinglePlayerMoves";
+import { MultiPlayerMoves } from "@/components/MultiPlayerMoves";
 import { GameDetailCard } from "@/components/GameDetailCard";
 
 export default function Home() {
@@ -29,11 +30,23 @@ export default function Home() {
   const [gameEnd, setGameEnd] = useState<boolean>(false);
   const [gameEndModalOpen, setGameEndModalOpen] = useState<boolean>(false);
 
+  // multi player
+  const [playerTurn, setPlayerTurn] = useState<number>(1);
+  const [playerScores, setPlayerScores] = useState<number[]>([]);
+
+  // start player turns and scores tracking for multiplayer
+  useEffect(() => {
+    if (!gameTypeChosen || gameType.numberOfPlayers === 1) return;
+    setPlayerScores(Array(gameType.numberOfPlayers).fill(0));
+  }, [gameType.numberOfPlayers, gameTypeChosen]);
+
   // only reset the active cards
   const restartGame = (): void => {
     setActiveCards([]);
     setStartTime(moment());
     setMoves(0);
+    setPlayerScores([]);
+    setPlayerTurn(1);
     setGameEnd(false);
     const resetGameArray = gridArray.map((item) => {
       return { ...item, isRevealed: false, isActive: false };
@@ -46,6 +59,8 @@ export default function Home() {
     setGameTypeChosen(false);
     setMoves(0);
     setGameEnd(false);
+    setPlayerScores([]);
+    setPlayerTurn(1);
     setGameType({
       gridSize: GridSize["4x4"],
       theme: Theme.NUMBERS,
@@ -56,13 +71,13 @@ export default function Home() {
 
   // get time elapsed since game start
   useEffect(() => {
-    if (!gameTypeChosen || gameEnd) return;
+    if (!gameTypeChosen || gameEnd || gameType.numberOfPlayers > 1) return;
     const interval = setInterval(() => {
       const now = moment();
       setTimeElapsed(moment.duration(now.diff(startTime)));
     }, 1000);
     return () => clearInterval(interval);
-  }, [startTime, gameTypeChosen, gameEnd]);
+  }, [startTime, gameTypeChosen, gameEnd, gameType.numberOfPlayers]);
 
   // end game if all cards are revealed
   useEffect(() => {
@@ -71,7 +86,6 @@ export default function Home() {
       (item) => item.isRevealed === true
     );
 
-    console.log({ allCardsRevealed, gridArray });
     if (allCardsRevealed) {
       setGameEnd(true);
       setGameEndModalOpen(true);
@@ -114,6 +128,10 @@ export default function Home() {
           setStartTime={setStartTime}
           timeElapsed={timeElapsed}
           setGameEnd={setGameEnd}
+          gameEnd={gameEnd}
+          setPlayerScores={setPlayerScores}
+          setPlayerTurn={setPlayerTurn}
+          playerTurn={playerTurn}
         />
 
         {/* moves counter for single player  */}
@@ -123,9 +141,19 @@ export default function Home() {
           </div>
         )}
 
-        {/* game modal for when the game ends */}
+        {/* moves counter for multi player */}
+        {gameType.numberOfPlayers > 1 && gameTypeChosen && (
+          <div className="w-full max-w-[327px] sm:max-w-[1110px]">
+            <MultiPlayerMoves
+              playerScores={playerScores}
+              playerTurn={playerTurn}
+            />
+          </div>
+        )}
+
+        {/* game modal for when the game ends for single players */}
         <GameModal
-          open={gameEndModalOpen}
+          open={gameEndModalOpen && gameType.numberOfPlayers === 1}
           setOpen={setGameEndModalOpen}
           borderRadius="rounded-2.5lg"
         >
@@ -176,7 +204,48 @@ export default function Home() {
           </div>
         </GameModal>
 
-        {/* multiplayer score tracker  */}
+        {/* game end modal for multiplayer  */}
+        <GameModal
+          open={true}
+          setOpen={setGameEndModalOpen}
+          borderRadius="rounded-2.5lg"
+        >
+          <div className="flex flex-col items-center justify-between space-y-6">
+            {/* game over text  */}
+            <div className="w-full text-center">
+              <h1 className="text-blue-700 font-bold text-2xl sm:text-5xl mb-2">
+                Player 3 Wins!
+              </h1>
+              <h2 className="text-blue-500 font-bold text-sm sm:text-lg">
+                Game over! Here are the results...
+              </h2>
+            </div>
+
+            {/* game details  */}
+
+            {/*CTA buttons  */}
+            <div className="w-full flex flex-col sm:flex-row space-y-4 space-x-0 sm:space-x-4 sm:space-y-0">
+              <button
+                className="bg-orange w-full sm:w-1/2 hover:bg-orange-100 rounded-3.5lg py-3 px-8 text-blue-100 text-lg font-bold transition-colors duration-200"
+                onClick={() => {
+                  restartGame();
+                  setGameEndModalOpen(false);
+                }}
+              >
+                Restart
+              </button>
+              <button
+                className="bg-blue-50 w-full sm:w-1/2 hover:bg-blue-400 text-blue-600 text-lg py-3 px-8 rounded-3.5lg font-bold transition-colors duration-200 hover:text-blue-100"
+                onClick={() => {
+                  newGame();
+                  setGameEndModalOpen(false);
+                }}
+              >
+                Setup New Game
+              </button>
+            </div>
+          </div>
+        </GameModal>
       </div>
     </>
   );

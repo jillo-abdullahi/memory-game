@@ -58,6 +58,10 @@ export interface GameBoardProps {
   setStartTime: Dispatch<SetStateAction<Moment>>;
   timeElapsed: Duration;
   setGameEnd: Dispatch<SetStateAction<boolean>>;
+  gameEnd: boolean;
+  setPlayerTurn: Dispatch<SetStateAction<number>>;
+  playerTurn: number;
+  setPlayerScores: Dispatch<SetStateAction<number[]>>;
 }
 
 export interface HeaderProps {
