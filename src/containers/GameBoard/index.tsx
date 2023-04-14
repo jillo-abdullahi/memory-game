@@ -18,6 +18,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   setMoves,
   setStartTime,
   timeElapsed,
+  setGameEnd,
 }) => {
   const activateCard = (index: number) => {
     const newArray = [...gridArray];
@@ -65,6 +66,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCards]);
 
+
   return (
     <div>
       {!gameTypeChosen ? (
@@ -83,7 +85,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       ) : (
         <div className="w-full bg-blue-200">
           <div
-            className={`grid gap-3 ${
+            className={`grid gap-5 ${
               gameType.gridSize === GridSize["4x4"]
                 ? "grid-cols-4 grid-rows-4"
                 : "grid-cols-6 grid-rows-6"

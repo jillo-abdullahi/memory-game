@@ -4,8 +4,9 @@ import { Dialog, Transition } from "@headlessui/react";
 export const GameModal: React.FC<{
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  borderRadius?: string;
   children: JSX.Element;
-}> = ({ open, setOpen, children }) => {
+}> = ({ open, setOpen, children, borderRadius = "rounded-lg" }) => {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
@@ -32,7 +33,9 @@ export const GameModal: React.FC<{
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-blue-200 p-6 text-left shadow-lg transition-all sm:my-8 sm:w-full sm:max-w-sm min-w-[320px]">
+              <Dialog.Panel
+                className={`relative transform overflow-hidden bg-blue-200 p-6 sm:p-14 text-left shadow-lg transition-all sm:my-8 w-[327px] sm:w-[654px] ${borderRadius}`}
+              >
                 {children}
               </Dialog.Panel>
             </Transition.Child>

@@ -57,6 +57,7 @@ export interface GameBoardProps {
   startTime: Moment;
   setStartTime: Dispatch<SetStateAction<Moment>>;
   timeElapsed: Duration;
+  setGameEnd: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface HeaderProps {
