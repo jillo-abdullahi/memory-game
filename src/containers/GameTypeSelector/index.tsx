@@ -1,10 +1,7 @@
+import moment from "moment";
 import { SelectorCardButton } from "@/components/SelectorCardButton";
 import { Title } from "@/components/Title";
-import {
-  Theme,
-  GridSize,
-  GameTypeSelectorProps,
-} from "@/types";
+import { Theme, GridSize, GameTypeSelectorProps } from "@/types";
 import { combineAndShuffleArray, generateArray } from "@/lib";
 
 // game type fields.
@@ -16,6 +13,7 @@ export const GameTypeSelector: React.FC<GameTypeSelectorProps> = ({
   setGameType,
   gameType,
   setGridArray,
+  setStartTime
 }) => {
   // generate grid object for the game board
   const getArray = (gridSize: GridSize) => {
@@ -24,11 +22,11 @@ export const GameTypeSelector: React.FC<GameTypeSelectorProps> = ({
   };
 
   return (
-    <div className="p-14 rounded-2.5lg bg-blue-100 space-y-8">
+    <div className="p-6 sm:p-14 rounded-2.5lg bg-blue-100 space-y-8 w-[327px] sm:w-[654px]">
       {/* theme  */}
       <div>
         <Title>Select Theme</Title>
-        <div className="flex justify-between items-center space-x-6">
+        <div className="flex justify-between items-center space-x-3 sm:space-x-6">
           {gameTheme.map((theme, index) => (
             <div key={index} className="w-1/2">
               <SelectorCardButton
@@ -50,7 +48,7 @@ export const GameTypeSelector: React.FC<GameTypeSelectorProps> = ({
       {/* number of players  */}
       <div>
         <Title>Number of players</Title>
-        <div className="flex justify-center items-center space-x-6 ">
+        <div className="flex justify-center items-center space-x-3 sm:space-x-6">
           {[1, 2, 3, 4].map((numberOfPlayers, index) => (
             <SelectorCardButton
               key={index}
@@ -71,7 +69,7 @@ export const GameTypeSelector: React.FC<GameTypeSelectorProps> = ({
       {/* Grid size  */}
       <div>
         <Title>Grid Size</Title>
-        <div className="flex justify-between items-center space-x-6">
+        <div className="flex justify-between items-center space-x-3 sm:space-x-6">
           {gameGridSize.map((gridSize, index) => (
             <div key={index} className="w-1/2">
               <SelectorCardButton
@@ -99,6 +97,10 @@ export const GameTypeSelector: React.FC<GameTypeSelectorProps> = ({
 
           // open game board.
           setGameTypeChosen(true);
+
+          // save game start time
+          setStartTime(moment());
+
         }}
       >
         Start Game

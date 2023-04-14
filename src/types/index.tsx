@@ -1,4 +1,5 @@
 // Description: This file contains all the types used in the application
+import { Duration, Moment } from "moment";
 import { Dispatch, SetStateAction } from "react";
 // Game type selector card
 export enum Theme {
@@ -22,6 +23,7 @@ export interface GameTypeSelectorProps {
   setGameType: Dispatch<SetStateAction<GameType>>;
   gameType: GameType;
   setGridArray: Dispatch<SetStateAction<GridArrayItem[]>>;
+  setStartTime: Dispatch<SetStateAction<Moment>>;
 }
 
 // game board card
@@ -50,9 +52,19 @@ export interface GameBoardProps {
   setGridArray: Dispatch<SetStateAction<GridArrayItem[]>>;
   activeCards: number[];
   setActiveCards: Dispatch<SetStateAction<number[]>>;
+  moves: number;
+  setMoves: Dispatch<SetStateAction<number>>;
+  startTime: Moment;
+  setStartTime: Dispatch<SetStateAction<Moment>>;
+  timeElapsed: Duration;
 }
 
 export interface HeaderProps {
   restartGame(): void;
   newGame(): void;
+}
+
+export interface SinglePlayerMovesProps {
+  moves: number;
+  timeElapsed: Duration;
 }

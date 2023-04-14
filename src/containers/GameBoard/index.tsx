@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import moment from "moment";
 import Image from "next/image";
 import { GameBoardButton } from "@/components/GameBoardButton";
 import { GameTypeSelector } from "@/containers/GameTypeSelector";
@@ -13,6 +14,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   setGridArray,
   activeCards,
   setActiveCards,
+  moves,
+  setMoves,
+  setStartTime,
+  timeElapsed,
 }) => {
   const activateCard = (index: number) => {
     const newArray = [...gridArray];
@@ -46,26 +51,35 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
         setGridArray(newArray);
         setActiveCards([]);
+        setMoves((prevState) => prevState + 1);
       } else {
         newArray[firstCardIndex].isActive = false;
         newArray[secondCardIndex].isActive = false;
         setTimeout(() => {
           setGridArray(newArray);
           setActiveCards([]);
+          setMoves((prevState) => prevState + 1);
         }, 1000);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCards]);
 
   return (
     <div>
       {!gameTypeChosen ? (
-        <GameTypeSelector
-          setGameTypeChosen={setGameTypeChosen}
-          setGridArray={setGridArray}
-          setGameType={setGameType}
-          gameType={gameType}
-        />
+        <>
+          <div className="text-blue-100 text-2xl sm:text-4xl font-bold w-full text-center mt-[4.8rem] mb-[2.8rem] sm:mb-[4.8rem]">
+            memory
+          </div>
+          <GameTypeSelector
+            setGameTypeChosen={setGameTypeChosen}
+            setGridArray={setGridArray}
+            setGameType={setGameType}
+            gameType={gameType}
+            setStartTime={setStartTime}
+          />
+        </>
       ) : (
         <div className="w-full bg-blue-200">
           <div

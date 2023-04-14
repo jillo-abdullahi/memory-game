@@ -16,16 +16,13 @@ export const GameBoardButton: React.FC<GameBoardButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center justify-center overflow-hidden p-4 transition-colors duration-200 text-white font-bold text-4xl ${buttonStyling} ${
+      className={`flex items-center justify-center rounded-full overflow-hidden p-4 transition-colors duration-200 text-white font-bold text-4xl ${buttonStyling} ${
         gridSize === GridSize["4x4"]
           ? "w-[72px] h-[72px] sm:w-[118px] sm:h-[118px]"
           : "w-[46px] h-[46px] sm:w-[82px] sm:h-[82px]"
       }
       ${!isRevealed && !isActive && "hover:bg-blue-400"}`}
       disabled={isRevealed || isActive || isDisabled}
-      style={{
-        borderRadius: "100%",
-      }}
     >
       {children}
     </button>

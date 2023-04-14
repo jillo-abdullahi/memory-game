@@ -23,17 +23,15 @@ module.exports = {
           700: "#152938",
         },
       },
-    },
-    borderRadius: {
-      "2.5lg": "20px",
-      "3.5lg": "26px",
-      "4.5lg": "35px",
-    },
-    minWidth: {
-      119: "119px",
-    },
-    fontFamily: {
-      atkinson: ["atkinson", "sans-serif"],
+      borderRadius: {
+        "1.5lg": "0.625rem", // 10px
+        "2.5lg": "1.25rem", // 20px
+        "3.5lg": "1.875rem", // 30px
+        "4.5lg": "2.5rem", // 40px
+      },
+      fontFamily: {
+        atkinson: ["atkinson", "sans-serif"],
+      },
     },
   },
   plugins: [],
