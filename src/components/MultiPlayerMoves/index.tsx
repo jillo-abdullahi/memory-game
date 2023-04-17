@@ -16,7 +16,7 @@ export const MultiPlayerMoves: React.FC<MultiPlayerMovesProps> = ({
         .sort((a, b) => a.id - b.id)
         .map(({ id, score }, index) => (
           <div key={index}>
-            <GameDetailCard title={`Player ${id}`}>
+            <GameDetailCard title={`Player ${id}`} isActive={playerTurn === id}>
               <span>{score}</span>
             </GameDetailCard>
 
