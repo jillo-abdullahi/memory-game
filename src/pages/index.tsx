@@ -42,35 +42,40 @@ export default function Home() {
   }, [gameType.numberOfPlayers, gameTypeChosen]);
 
   const resetGame = (): void => {
-    setMoves(0);
+    if (gameType.numberOfPlayers === 1) {
+      setMoves(0);
+      setStartTime(moment());
+    } else {
+      setPlayerScores(Array(gameType.numberOfPlayers).fill(0));
+      setPlayerTurn(1);
+      setGameWinners([]);
+    }
     setGameEnd(false);
-    setPlayerScores([]);
-    setPlayerTurn(1);
   };
-
-  console.log({ gameType });
 
   // only reset the active cards
   const restartGame = (): void => {
     setActiveCards([]);
-    setStartTime(moment());
+    setGridArray(
+      gridArray.map((item) => ({
+        ...item,
+        isRevealed: false,
+        isActive: false,
+      }))
+    );
     resetGame();
-    const resetGameArray = gridArray.map((item) => {
-      return { ...item, isRevealed: false, isActive: false };
-    });
-    setGridArray(resetGameArray);
   };
 
   // clear everything and start a new game
   const newGame = (): void => {
     setGameTypeChosen(false);
-    resetGame();
     setGameType({
       gridSize: GridSize["4x4"],
       theme: Theme.NUMBERS,
       numberOfPlayers: 1,
     });
     setGridArray([]);
+    resetGame();
   };
 
   // get time elapsed since game start
