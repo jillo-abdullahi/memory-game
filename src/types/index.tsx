@@ -43,6 +43,10 @@ export interface GridArrayItem {
   isActive: boolean;
 }
 
+export type PlayerScore = {
+  id: number;
+  score: number;
+};
 export interface GameBoardProps {
   gameTypeChosen: boolean;
   setGameTypeChosen: Dispatch<SetStateAction<boolean>>;
@@ -52,16 +56,14 @@ export interface GameBoardProps {
   setGridArray: Dispatch<SetStateAction<GridArrayItem[]>>;
   activeCards: number[];
   setActiveCards: Dispatch<SetStateAction<number[]>>;
-  moves: number;
   setMoves: Dispatch<SetStateAction<number>>;
   startTime: Moment;
   setStartTime: Dispatch<SetStateAction<Moment>>;
-  timeElapsed: Duration;
-  setGameEnd: Dispatch<SetStateAction<boolean>>;
   gameEnd: boolean;
   setPlayerTurn: Dispatch<SetStateAction<number>>;
   playerTurn: number;
-  setPlayerScores: Dispatch<SetStateAction<number[]>>;
+  setPlayerScores: Dispatch<SetStateAction<PlayerScore[]>>;
+  playerScores: PlayerScore[];
 }
 
 export interface HeaderProps {

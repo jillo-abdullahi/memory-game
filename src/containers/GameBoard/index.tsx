@@ -1,9 +1,8 @@
 import { useEffect } from "react";
-import moment from "moment";
 import Image from "next/image";
 import { GameBoardButton } from "@/components/GameBoardButton";
 import { GameTypeSelector } from "@/containers/GameTypeSelector";
-import { GameBoardProps, GridSize, Theme } from "@/types";
+import { GameBoardProps, GridSize, PlayerScore, Theme } from "@/types";
 
 export const GameBoard: React.FC<GameBoardProps> = ({
   gameTypeChosen,
@@ -14,15 +13,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   setGridArray,
   activeCards,
   setActiveCards,
-  moves,
   setMoves,
   setStartTime,
-  timeElapsed,
   gameEnd,
-  setGameEnd,
   setPlayerTurn,
   playerTurn,
   setPlayerScores,
+  playerScores,
 }) => {
   const activateCard = (index: number) => {
     const newArray = [...gridArray];
@@ -56,16 +53,29 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
         setGridArray(newArray);
         setActiveCards([]);
-        setMoves((prevState) => prevState + 1);
+        if (gameType.numberOfPlayers === 1)
+          setMoves((prevState) => prevState + 1);
         changePlayerTurn();
 
         // set current player score
         if (gameType.numberOfPlayers > 1) {
-          setPlayerScores((prevState) => {
-            const updatedScores = [...prevState];
-            updatedScores[playerTurn - 1] += 1;
-            return updatedScores;
-          });
+          // find player and index
+          const player = playerScores.find(
+            (player: PlayerScore) => player.id === playerTurn
+          );
+          const playerIndex = playerScores.findIndex(
+            (player: PlayerScore) => player.id === playerTurn
+          );
+
+          // update player score
+          if (player) {
+            player.score++;
+            setPlayerScores((prevState) => [
+              ...prevState.slice(0, playerIndex),
+              { ...player },
+              ...prevState.slice(playerIndex + 1),
+            ]);
+          }
         }
       } else {
         newArray[firstCardIndex].isActive = false;
@@ -73,13 +83,14 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         setTimeout(() => {
           setGridArray(newArray);
           setActiveCards([]);
-          setMoves((prevState) => prevState + 1);
+          if (gameType.numberOfPlayers === 1)
+            setMoves((prevState) => prevState + 1);
           changePlayerTurn();
         }, 1000);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeCards]);
+  }, [activeCards, gameType.numberOfPlayers]);
 
   const changePlayerTurn = () => {
     if (gameEnd || activeCards.length < 2 || gameType.numberOfPlayers === 1)

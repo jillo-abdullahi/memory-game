@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import moment, { Duration, Moment } from "moment";
 import { GameBoard } from "@/containers/GameBoard";
 import { Header } from "@/components/Header";
@@ -8,6 +8,7 @@ import { Theme, GridSize, GameType, GridArrayItem } from "@/types";
 import { SinglePlayerMoves } from "@/components/SinglePlayerMoves";
 import { MultiPlayerMoves } from "@/components/MultiPlayerMoves";
 import { GameDetailCard } from "@/components/GameDetailCard";
+import { PlayerScore } from "@/types";
 
 export default function Home() {
   const [gameTypeChosen, setGameTypeChosen] = useState<boolean>(false);
@@ -32,21 +33,30 @@ export default function Home() {
 
   // multi player
   const [playerTurn, setPlayerTurn] = useState<number>(1);
-  const [playerScores, setPlayerScores] = useState<number[]>([]);
+  const [playerScores, setPlayerScores] = useState<PlayerScore[]>([]);
   const [gameWinners, setGameWinners] = useState<number[]>([]);
+
+  const initializeScoreBoard = useCallback((): void => {
+    setPlayerScores(
+      [...Array(gameType.numberOfPlayers)].map((_, i) => ({
+        id: i + 1,
+        score: 0,
+      }))
+    );
+  }, [gameType.numberOfPlayers]);
 
   // start player turns and scores tracking for multiplayer
   useEffect(() => {
     if (!gameTypeChosen || gameType.numberOfPlayers === 1) return;
-    setPlayerScores(Array(gameType.numberOfPlayers).fill(0));
-  }, [gameType.numberOfPlayers, gameTypeChosen]);
+    initializeScoreBoard();
+  }, [gameType.numberOfPlayers, gameTypeChosen, initializeScoreBoard]);
 
   const resetGame = (): void => {
     if (gameType.numberOfPlayers === 1) {
       setMoves(0);
       setStartTime(moment());
     } else {
-      setPlayerScores(Array(gameType.numberOfPlayers).fill(0));
+      initializeScoreBoard();
       setPlayerTurn(1);
       setGameWinners([]);
     }
@@ -119,8 +129,12 @@ export default function Home() {
   // check game winner when the game ends
   useEffect(() => {
     if (!gameEnd || gameType.numberOfPlayers === 1) return;
-    setGameWinners(findGameWinners(playerScores));
+    setGameWinners(
+      findGameWinners(playerScores.map((playerScore) => playerScore.score))
+    );
   }, [gameEnd, gameType.numberOfPlayers, playerScores]);
+
+  console.log({ playerScores, playerTurn });
 
   return (
     <>
@@ -128,7 +142,7 @@ export default function Home() {
         <title>Memory</title>
         <meta name="description" content="a multi-player memory game" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" />
       </Head>
 
       <div
@@ -151,14 +165,12 @@ export default function Home() {
           setGridArray={setGridArray}
           activeCards={activeCards}
           setActiveCards={setActiveCards}
-          moves={moves}
           setMoves={setMoves}
           startTime={startTime}
           setStartTime={setStartTime}
-          timeElapsed={timeElapsed}
-          setGameEnd={setGameEnd}
           gameEnd={gameEnd}
           setPlayerScores={setPlayerScores}
+          playerScores={playerScores}
           setPlayerTurn={setPlayerTurn}
           playerTurn={playerTurn}
         />
@@ -196,7 +208,9 @@ export default function Home() {
                     gameWinners.length > 1
                       ? "It's a tie!"
                       : `Player ${
-                          playerScores.indexOf(gameWinners[0]) + 1
+                          playerScores.find(
+                            (player) => player.score === gameWinners[0]
+                          )?.id
                         } wins!`
                   }`}
               </h1>
@@ -210,18 +224,22 @@ export default function Home() {
             {/* game details  */}
             {gameType.numberOfPlayers > 1 ? (
               <div className="flex flex-col space-y-2 w-full">
-                {playerScores.map((score, index) => (
-                  <div key={index}>
-                    <GameDetailCard
-                      winnerMode={gameWinners.includes(score)}
-                      title={`Player ${index + 1} ${
-                        gameWinners.includes(score) ? `(Winner!)` : ""
-                      }`}
-                    >
-                      <span>{`${score} Pairs`}</span>
-                    </GameDetailCard>
-                  </div>
-                ))}
+                {playerScores
+                  .sort((a, b) => b.score - a.score)
+                  .map(({ id, score }, index) => (
+                    <div key={index}>
+                      <GameDetailCard
+                        winnerMode={gameWinners.includes(score)}
+                        title={`Player ${id} ${
+                          gameWinners.includes(score) ? `(Winner!)` : ""
+                        }`}
+                      >
+                        <span>{`${score} ${
+                          score > 1 ? "Pairs" : "Pair"
+                        }`}</span>
+                      </GameDetailCard>
+                    </div>
+                  ))}
               </div>
             ) : (
               <>
