@@ -3,6 +3,7 @@ import Image from "next/image";
 import { GameBoardButton } from "@/components/GameBoardButton";
 import { GameTypeSelector } from "@/containers/GameTypeSelector";
 import { GameBoardProps, GridSize, PlayerScore, Theme } from "@/types";
+import { useMediaQuery } from "react-responsive";
 
 export const GameBoard: React.FC<GameBoardProps> = ({
   gameTypeChosen,
@@ -39,6 +40,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       setGridArray(updatedData);
     }
   };
+
+  const isShortScreen = useMediaQuery({ query: "(max-height: 930px)" });
 
   useEffect(() => {
     // compare once we have two active cards
@@ -121,11 +124,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       ) : (
         <div className="w-full bg-blue-200">
           <div
-            className={`grid gap-5 ${
+            className={`grid ${
               gameType.gridSize === GridSize["4x4"]
                 ? "grid-cols-4 grid-rows-4"
                 : "grid-cols-6 grid-rows-6"
-            }`}
+            } ${isShortScreen ? "gap-3" : "gap-5"}`}
           >
             {gridArray.map(({ value, icon, isActive, isRevealed }, index) => {
               return (
