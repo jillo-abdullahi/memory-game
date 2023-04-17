@@ -33,6 +33,7 @@ export default function Home() {
   // multi player
   const [playerTurn, setPlayerTurn] = useState<number>(1);
   const [playerScores, setPlayerScores] = useState<number[]>([]);
+  const [gameWinners, setGameWinners] = useState<number[]>([]);
 
   // start player turns and scores tracking for multiplayer
   useEffect(() => {
@@ -40,14 +41,20 @@ export default function Home() {
     setPlayerScores(Array(gameType.numberOfPlayers).fill(0));
   }, [gameType.numberOfPlayers, gameTypeChosen]);
 
+  const resetGame = (): void => {
+    setMoves(0);
+    setGameEnd(false);
+    setPlayerScores([]);
+    setPlayerTurn(1);
+  };
+
+  console.log({ gameType });
+
   // only reset the active cards
   const restartGame = (): void => {
     setActiveCards([]);
     setStartTime(moment());
-    setMoves(0);
-    setPlayerScores([]);
-    setPlayerTurn(1);
-    setGameEnd(false);
+    resetGame();
     const resetGameArray = gridArray.map((item) => {
       return { ...item, isRevealed: false, isActive: false };
     });
@@ -57,10 +64,7 @@ export default function Home() {
   // clear everything and start a new game
   const newGame = (): void => {
     setGameTypeChosen(false);
-    setMoves(0);
-    setGameEnd(false);
-    setPlayerScores([]);
-    setPlayerTurn(1);
+    resetGame();
     setGameType({
       gridSize: GridSize["4x4"],
       theme: Theme.NUMBERS,
@@ -92,6 +96,26 @@ export default function Home() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gridArray]);
+
+  const findGameWinners = (scores: number[]) => {
+    let winners = [0];
+    for (const score of scores) {
+      if (score > winners[0]) {
+        // there's one winner
+        winners = [score];
+      } else if (score === winners[0]) {
+        // in case there's more than one winner
+        winners.push(score);
+      }
+    }
+    return winners;
+  };
+
+  // check game winner when the game ends
+  useEffect(() => {
+    if (!gameEnd || gameType.numberOfPlayers === 1) return;
+    setGameWinners(findGameWinners(playerScores));
+  }, [gameEnd, gameType.numberOfPlayers, playerScores]);
 
   return (
     <>
@@ -153,7 +177,7 @@ export default function Home() {
 
         {/* game modal for when the game ends for single players */}
         <GameModal
-          open={gameEndModalOpen && gameType.numberOfPlayers === 1}
+          open={gameEndModalOpen}
           setOpen={setGameEndModalOpen}
           borderRadius="rounded-2.5lg"
         >
@@ -161,69 +185,55 @@ export default function Home() {
             {/* game over text  */}
             <div className="w-full text-center">
               <h1 className="text-blue-700 font-bold text-2xl sm:text-5xl mb-2">
-                You did it!
+                {gameType.numberOfPlayers === 1 && "You did it!"}
+                {gameType.numberOfPlayers > 1 &&
+                  `${
+                    gameWinners.length > 1
+                      ? "It's a tie!"
+                      : `Player ${
+                          playerScores.indexOf(gameWinners[0]) + 1
+                        } wins!`
+                  }`}
               </h1>
               <h2 className="text-blue-500 font-bold text-sm sm:text-lg">
-                {"Game over! Here's how you got on..."}
+                {gameType.numberOfPlayers > 1
+                  ? "Game over! Here are the results..."
+                  : "Game over! Here's how you got on..."}
               </h2>
             </div>
 
             {/* game details  */}
-            <div className="flex flex-col space-y-2 w-full">
-              <GameDetailCard title="Time Elapsed">
-                <span>{`${timeElapsed.minutes()}:${timeElapsed
-                  .seconds()
-                  .toString()
-                  .padStart(2, "0")}`}</span>
-              </GameDetailCard>
-              <GameDetailCard title="Moves Taken">
-                <span>{moves}</span>
-              </GameDetailCard>
-            </div>
+            {gameType.numberOfPlayers > 1 ? (
+              <div className="flex flex-col space-y-2 w-full">
+                {playerScores.map((score, index) => (
+                  <div key={index}>
+                    <GameDetailCard
+                      winnerMode={gameWinners.includes(score)}
+                      title={`Player ${index + 1} ${
+                        gameWinners.includes(score) ? `(Winner!)` : ""
+                      }`}
+                    >
+                      <span>{`${score} Pairs`}</span>
+                    </GameDetailCard>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                <div className="flex flex-col space-y-2 w-full">
+                  <GameDetailCard title="Time Elapsed">
+                    <span>{`${timeElapsed.minutes()}:${timeElapsed
+                      .seconds()
+                      .toString()
+                      .padStart(2, "0")}`}</span>
+                  </GameDetailCard>
+                  <GameDetailCard title="Moves Taken">
+                    <span>{moves}</span>
+                  </GameDetailCard>
+                </div>
+              </>
+            )}
             {/* CTA buttons  */}
-            <div className="w-full flex flex-col sm:flex-row space-y-4 space-x-0 sm:space-x-4 sm:space-y-0">
-              <button
-                className="bg-orange w-full sm:w-1/2 hover:bg-orange-100 rounded-3.5lg py-3 px-8 text-blue-100 text-lg font-bold transition-colors duration-200"
-                onClick={() => {
-                  restartGame();
-                  setGameEndModalOpen(false);
-                }}
-              >
-                Restart
-              </button>
-              <button
-                className="bg-blue-50 w-full sm:w-1/2 hover:bg-blue-400 text-blue-600 text-lg py-3 px-8 rounded-3.5lg font-bold transition-colors duration-200 hover:text-blue-100"
-                onClick={() => {
-                  newGame();
-                  setGameEndModalOpen(false);
-                }}
-              >
-                Setup New Game
-              </button>
-            </div>
-          </div>
-        </GameModal>
-
-        {/* game end modal for multiplayer  */}
-        <GameModal
-          open={true}
-          setOpen={setGameEndModalOpen}
-          borderRadius="rounded-2.5lg"
-        >
-          <div className="flex flex-col items-center justify-between space-y-6">
-            {/* game over text  */}
-            <div className="w-full text-center">
-              <h1 className="text-blue-700 font-bold text-2xl sm:text-5xl mb-2">
-                Player 3 Wins!
-              </h1>
-              <h2 className="text-blue-500 font-bold text-sm sm:text-lg">
-                Game over! Here are the results...
-              </h2>
-            </div>
-
-            {/* game details  */}
-
-            {/*CTA buttons  */}
             <div className="w-full flex flex-col sm:flex-row space-y-4 space-x-0 sm:space-x-4 sm:space-y-0">
               <button
                 className="bg-orange w-full sm:w-1/2 hover:bg-orange-100 rounded-3.5lg py-3 px-8 text-blue-100 text-lg font-bold transition-colors duration-200"

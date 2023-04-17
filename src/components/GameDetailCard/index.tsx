@@ -2,15 +2,28 @@ export const GameDetailCard: React.FC<{
   title: string;
   children: JSX.Element;
   isActive?: boolean;
-}> = ({ title, children, isActive }) => {
+  winnerMode?: boolean;
+}> = ({ title, children, isActive, winnerMode }) => {
   return (
     <div
       className={`flex flex-col sm:flex-row items-center justify-between rounded-1.5lg p-3 sm:p-4 w-full min-w-[151px] sm:min-w-[255px] ${
-        isActive ? "bg-orange" : "bg-blue-50"
+        winnerMode ? "bg-blue-600" : isActive ? "bg-orange" : "bg-blue-50"
       }`}
     >
-      <div className="text-lg text-blue-500 font-bold">{title}</div>
-      <div className="text-3xl text-blue-600 font-bold">{children}</div>
+      <div
+        className={`text-lg font-bold ${
+          winnerMode ? "text-blue-100" : "text-blue-500 "
+        }`}
+      >
+        {title}
+      </div>
+      <div
+        className={`text-3xl  font-bold ${
+          winnerMode ? "text-blue-100" : "text-blue-600"
+        }`}
+      >
+        {children}
+      </div>
     </div>
   );
 };
