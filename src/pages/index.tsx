@@ -30,6 +30,7 @@ export default function Home() {
   // game end
   const [gameEnd, setGameEnd] = useState<boolean>(false);
   const [gameEndModalOpen, setGameEndModalOpen] = useState<boolean>(false);
+  const [cardsRevealed, setCardsRevealed] = useState<number>(0);
 
   // multi player
   const [playerTurn, setPlayerTurn] = useState<number>(1);
@@ -100,17 +101,21 @@ export default function Home() {
 
   // end game if all cards are revealed
   useEffect(() => {
-    if (!gameTypeChosen) return;
-    const allCardsRevealed = gridArray.every(
-      (item) => item.isRevealed === true
-    );
-
-    if (allCardsRevealed) {
+    if (!gameTypeChosen || gameType.numberOfPlayers === 1) return;
+    if (gridArray.length === cardsRevealed) {
       setGameEnd(true);
+      setGameWinners(
+        findGameWinners(playerScores.map((playerScore) => playerScore.score))
+      );
       setGameEndModalOpen(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gridArray]);
+  }, [
+    gridArray,
+    cardsRevealed,
+    gameTypeChosen,
+    playerScores,
+    gameType.numberOfPlayers,
+  ]);
 
   const findGameWinners = (scores: number[]) => {
     let winners = [0];
@@ -125,14 +130,6 @@ export default function Home() {
     }
     return winners;
   };
-
-  // check game winner when the game ends
-  useEffect(() => {
-    if (!gameEnd || gameType.numberOfPlayers === 1) return;
-    setGameWinners(
-      findGameWinners(playerScores.map((playerScore) => playerScore.score))
-    );
-  }, [gameEnd, gameType.numberOfPlayers, playerScores]);
 
   return (
     <>
@@ -171,6 +168,7 @@ export default function Home() {
           playerScores={playerScores}
           setPlayerTurn={setPlayerTurn}
           playerTurn={playerTurn}
+          setCardsRevealed={setCardsRevealed}
         />
 
         {/* moves counter for single player  */}
@@ -190,7 +188,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* game modal for when the game ends for single players */}
+        {/* game modal for when the game ends */}
         <GameModal
           open={gameEndModalOpen}
           setOpen={setGameEndModalOpen}

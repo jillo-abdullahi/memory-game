@@ -64,6 +64,7 @@ export interface GameBoardProps {
   playerTurn: number;
   setPlayerScores: Dispatch<SetStateAction<PlayerScore[]>>;
   playerScores: PlayerScore[];
+  setCardsRevealed: Dispatch<SetStateAction<number>>;
 }
 
 export interface HeaderProps {

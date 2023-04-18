@@ -21,6 +21,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   playerTurn,
   setPlayerScores,
   playerScores,
+  setCardsRevealed,
 }) => {
   const isShortScreen = useMediaQuery({ query: "(max-height: 930px)" });
 
@@ -55,6 +56,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
         // reset and wait for next turn
         setActiveCards([]);
+
+        // update number of cards revealed
+        setCardsRevealed((prevState) => prevState + 2);
 
         // keep track of single player moves
         if (gameType.numberOfPlayers === 1) {
