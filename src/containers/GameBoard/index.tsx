@@ -46,19 +46,22 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   useEffect(() => {
     // compare once we have two active cards
     if (activeCards.length === 2) {
-      const newArray = [...gridArray];
-      const [firstCardIndex, secondCardIndex] = activeCards;
-      const firstCard = newArray[firstCardIndex];
-      const secondCard = newArray[secondCardIndex];
-      if (firstCard.value === secondCard.value) {
-        newArray[firstCardIndex].isRevealed = true;
-        newArray[secondCardIndex].isRevealed = true;
+      const newGridArray = [...gridArray];
+      if (gridArray[activeCards[0]].value === gridArray[activeCards[1]].value) {
+        for (const cardIndex of activeCards) {
+          newGridArray[cardIndex].isRevealed = true;
+        }
+        setGridArray(newGridArray);
 
-        setGridArray(newArray);
+        // reset and wait for next turn
         setActiveCards([]);
-        if (gameType.numberOfPlayers === 1)
+
+        // keep track of single player moves
+        if (gameType.numberOfPlayers === 1) {
           setMoves((prevState) => prevState + 1);
-        changePlayerTurn();
+        } else {
+          changePlayerTurn();
+        }
 
         // set current player score
         if (gameType.numberOfPlayers > 1) {
@@ -81,14 +84,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           }
         }
       } else {
-        newArray[firstCardIndex].isActive = false;
-        newArray[secondCardIndex].isActive = false;
         setTimeout(() => {
-          setGridArray(newArray);
+          for (const cardIndex of activeCards) {
+            newGridArray[cardIndex].isActive = false;
+          }
+          setGridArray(newGridArray);
           setActiveCards([]);
-          if (gameType.numberOfPlayers === 1)
+          if (gameType.numberOfPlayers === 1) {
             setMoves((prevState) => prevState + 1);
-          changePlayerTurn();
+          } else {
+            changePlayerTurn();
+          }
         }, 1000);
       }
     }
