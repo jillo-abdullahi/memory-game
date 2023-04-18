@@ -134,8 +134,6 @@ export default function Home() {
     );
   }, [gameEnd, gameType.numberOfPlayers, playerScores]);
 
-  console.log({ playerScores, playerTurn });
-
   return (
     <>
       <Head>

@@ -22,6 +22,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   setPlayerScores,
   playerScores,
 }) => {
+  const isShortScreen = useMediaQuery({ query: "(max-height: 930px)" });
+
   const activateCard = (index: number) => {
     const newArray = [...gridArray];
 
@@ -40,8 +42,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       setGridArray(updatedData);
     }
   };
-
-  const isShortScreen = useMediaQuery({ query: "(max-height: 930px)" });
 
   useEffect(() => {
     // compare once we have two active cards
@@ -142,17 +142,33 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                   isActive={isActive}
                   isRevealed={isRevealed}
                 >
-                  {!isActive && !isRevealed ? null : gameType.theme ===
-                    Theme.NUMBERS ? (
-                    value.toString()
-                  ) : (
-                    <Image
-                      src={`/images/icon-${icon}.svg`}
-                      width={gameType.gridSize === GridSize["4x4"] ? 56 : 40}
-                      height={gameType.gridSize === GridSize["4x4"] ? 56 : 40}
-                      alt=""
-                    />
-                  )}
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <div
+                      className={`absolute top-0 left-0 transition-opacity w-full h-full flex items-center justify-center duration-200 ${
+                        gameType.theme === Theme.NUMBERS &&
+                        (isActive || isRevealed)
+                          ? "opacity-100"
+                          : "opacity-0"
+                      }`}
+                    >
+                      {value.toString()}
+                    </div>
+                    <div
+                      className={`absolute top-0 left-0  w-full h-full flex items-center justify-center transition-opacity duration-200 ${
+                        gameType.theme === Theme.ICONS &&
+                        (isActive || isRevealed)
+                          ? "opacity-100"
+                          : "opacity-0"
+                      }`}
+                    >
+                      <Image
+                        src={`/images/icon-${icon}.svg`}
+                        width={gameType.gridSize === GridSize["4x4"] ? 56 : 40}
+                        height={gameType.gridSize === GridSize["4x4"] ? 56 : 40}
+                        alt=""
+                      />
+                    </div>
+                  </div>
                 </GameBoardButton>
               );
             })}
